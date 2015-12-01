@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "Copy ID",
+  "description": "Copies the ID portion of a URL to the pasteboard",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": {
+      "19": "icon19.png",
+      "38": "icon38.png"
+    },
+    "default_title": "Copy ID"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab"
+  ]
+}
