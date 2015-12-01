@@ -1,4 +1,4 @@
-// Anything shorter than this is surely not an ID, because maths.
+// Anything shorter than this is surely not an ID, right?
 var MIN_ID_LENGTH = 5;
 
 function copyToPasteboard(str) {
@@ -24,7 +24,8 @@ function getComponentScore(component) {
     return 0;
   }
 
-  var score = 10;
+  // Otherwise, we favour components with lots of digits over those with
+  // fewer digits.
   var num_digits = 0;
   component.split('').forEach(function(char) {
     if (char.match(/[0-9a-f]/i)) {
@@ -32,8 +33,7 @@ function getComponentScore(component) {
     }
   });
 
-  var digit_prevalence = num_digits / component.length;
-  return score * digit_prevalence;
+  return num_digits / component.length;
 }
 
 chrome.browserAction.onClicked.addListener(function(tab) {
