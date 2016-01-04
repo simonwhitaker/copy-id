@@ -86,6 +86,41 @@ function getIdForURL(url) {
   }
   return null;
 }
+
+function updateBarButtonTitle(tabId) {
+  var tabIdString = tabId.toString();
+  chrome.storage.local.get(tabIdString, function(items) {
+    var id = items[tabIdString];
+    var title = id == null
+      ? 'No ID found in URL'
+      : 'Copy ' + id + ' to pasteboard';
+    chrome.browserAction.setTitle({
+      'title': title,
+      'tabId': tabId,
+    });
+  });
+}
+
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+  var tabId = activeInfo.tabId;
+  updateBarButtonTitle(tabId);
+});
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  var url = changeInfo.url;
+  var tabIdString = tabId.toString();
+  if (url) {
+    var dataToStore = {};
+    dataToStore[tabIdString] = getIdForURL(url);
+    var callback = function() {
+      updateBarButtonTitle(tabId);
+    };
+    chrome.storage.local.set(dataToStore, callback);
+  } else {
+    chrome.storage.local.remove(tabIdString, callback);
+  }
+});
+
 chrome.browserAction.onClicked.addListener(function(tab) {
   var id = getIdForURL(tab.url);
   if (id) {
