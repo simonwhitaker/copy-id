@@ -36,14 +36,13 @@ function getComponentScore(component) {
   return num_digits / component.length;
 }
 
-chrome.browserAction.onClicked.addListener(function(tab) {
-  var url = tab.url;
+function getIdForURL(url) {
   var components = []; // List of URL components that might be an ID
 
   // Remove everything up to and including the end of the domain. e.g. given
   // http://foo.com/bar/wibble?baz=123#456, this regex renders
   // "bar/wibble?baz=123#456"
-  var url_minus_domain = tab.url.replace(/^.+:\/\/.+?\//, '');
+  var url_minus_domain = url.replace(/^.+:\/\/.+?\//, '');
 
   // Look for a fragment, consider it as a possible ID
   var remainder_and_fragment = url_minus_domain.split('#');
@@ -83,8 +82,13 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   });
 
   if (bestScore > 0) {
-    copyToPasteboard(mostLikelyIDComponent);
-  } else {
-    copyToPasteboard(tab.url);
+    return mostLikelyIDComponent;
+  }
+  return null;
+}
+chrome.browserAction.onClicked.addListener(function(tab) {
+  var id = getIdForURL(tab.url);
+  if (id) {
+    copyToPasteboard(id);
   }
 });
